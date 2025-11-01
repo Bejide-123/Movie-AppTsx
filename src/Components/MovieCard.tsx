@@ -1,5 +1,6 @@
 import { Star, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useMovieContext } from "../Context/MovieContext";
 import type { Movie } from "../Types/movieType";
 
 interface MovieCardProps {
@@ -7,6 +8,9 @@ interface MovieCardProps {
 }
 
 export default function MovieCard({ movie }: MovieCardProps) {
+  const { toggleFavorite, isFavorite } = useMovieContext();
+  const isMovieFavorite = isFavorite(movie.id);
+
   const imageUrl = movie.poster_path
     ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
     : "https://via.placeholder.com/500x750?text=No+Image";
@@ -21,7 +25,6 @@ export default function MovieCard({ movie }: MovieCardProps) {
       className="group"
     >
       <div className="bg-slate-800 rounded-lg overflow-hidden hover:ring-2 hover:ring-blue-500 transition-all duration-300">
-        {/* Movie Poster */}
         <div className="relative overflow-hidden aspect-2/3">
           <img 
             src={imageUrl} 
@@ -34,12 +37,18 @@ export default function MovieCard({ movie }: MovieCardProps) {
           <button
             onClick={(e) => {
               e.preventDefault();
-              console.log("Add to favorites:", movie.id);
+              toggleFavorite(movie);
             }}
-            className="absolute top-2 right-2 bg-slate-900/80 hover:bg-slate-900 p-1.5 rounded-full transition backdrop-blur-sm"
-            aria-label="Add to favorites"
+            className={`absolute top-2 right-2 p-1.5 rounded-full transition backdrop-blur-sm ${
+              isMovieFavorite 
+                ? "bg-red-500 hover:bg-red-600" 
+                : "bg-slate-900/80 hover:bg-slate-900"
+            }`}
+            aria-label={isMovieFavorite ? "Remove from favorites" : "Add to favorites"}
           >
-            <Heart className="w-4 h-4 text-white" />
+            <Heart 
+              className={`w-4 h-4 ${isMovieFavorite ? "fill-white text-white" : "text-white"}`} 
+            />
           </button>
 
           {/* Rating Badge */}
@@ -51,7 +60,6 @@ export default function MovieCard({ movie }: MovieCardProps) {
           </div>
         </div>
 
-        {/* Movie Info */}
         <div className="p-3">
           <h3 className="text-sm font-semibold text-white line-clamp-1 group-hover:text-blue-400 transition">
             {movie.title}
