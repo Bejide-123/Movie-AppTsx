@@ -3,8 +3,10 @@ import { useParams, useNavigate } from "react-router-dom";
 import { fetchMovieById } from "../Services/api";
 import { Star, Calendar, Clock, ArrowLeft, Heart } from "lucide-react";
 import type { MovieDetails } from "../Types/movieType";
+import { useMovieContext } from "../Context/MovieContext";
 
 export default function MovieDetailPage() {
+  const { toggleFavorite, isFavorite } = useMovieContext();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   
@@ -56,6 +58,9 @@ export default function MovieDetailPage() {
       </div>
     );
   }
+
+  // ✅ NOW we can safely use movie because we've checked it exists above
+  const isMovieFavorite = isFavorite(movie.id);
 
   const backdropUrl = movie.backdrop_path
     ? `https://image.tmdb.org/t/p/original${movie.backdrop_path}`
@@ -136,11 +141,15 @@ export default function MovieDetailPage() {
               )}
 
               <button
-                onClick={() => console.log("Add to favorites:", movie.id)}
-                className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 px-4 py-1.5 rounded-lg transition"
+                onClick={() => toggleFavorite(movie)}
+                className={`flex items-center gap-2 px-4 py-1.5 rounded-lg transition ${
+                  isMovieFavorite 
+                    ? "bg-red-500 hover:bg-red-600" 
+                    : "bg-blue-500 hover:bg-blue-600"
+                }`}
               >
-                <Heart className="w-5 h-5" />
-                Add to Favorites
+                <Heart className={`w-5 h-5 ${isMovieFavorite ? "fill-white" : ""}`} />
+                {isMovieFavorite ? "Remove from Favorites" : "Add to Favorites"}
               </button>
             </div>
 
