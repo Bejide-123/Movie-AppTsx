@@ -1,6 +1,6 @@
 import { createContext, useContext, useReducer, useEffect } from "react";
 import { movieReducer, initialState } from "./MovieReducer";
-import type { MovieState, MovieAction } from "./MovieReducer"
+import type { MovieState, MovieAction } from "./MovieReducer";
 import type { Movie } from "../Types/movieType";
 import type { ReactNode } from "react";
 
@@ -11,6 +11,7 @@ interface MovieContextType {
   removeFavorite: (movieId: number) => void;
   toggleFavorite: (movie: Movie) => void;
   isFavorite: (movieId: number) => boolean;
+  setSearchQuery: (query: string) => void;
 }
 
 const MovieContext = createContext<MovieContextType | undefined>(undefined);
@@ -53,6 +54,10 @@ export const MovieProvider = ({ children }: { children: ReactNode }) => {
     return state.favorites.some((movie) => movie.id === movieId);
   };
 
+  const setSearchQuery = (query: string) => {
+    dispatch({ type: "SET_SEARCH_QUERY", payload: query });
+  };
+
   return (
     <MovieContext.Provider
       value={{
@@ -62,6 +67,7 @@ export const MovieProvider = ({ children }: { children: ReactNode }) => {
         removeFavorite,
         toggleFavorite,
         isFavorite,
+        setSearchQuery,
       }}
     >
       {children}

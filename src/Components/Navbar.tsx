@@ -1,29 +1,24 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Search, Heart, Film, Menu, X } from "lucide-react";
 import type { FormEvent, ChangeEvent, JSX } from "react";
 import { useMovieContext } from "../Context/MovieContext";
 
 export default function Navbar(): JSX.Element {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const navigate = useNavigate();
+  const [searchInput, setSearchInput] = useState<string>("");
   
-  
-  const { state } = useMovieContext();
+  const { state, setSearchQuery } = useMovieContext();
   const favoritesCount = state.favorites.length;
 
   const handleSearch = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/search?query=${encodeURIComponent(searchQuery.trim())}`);
-      setSearchQuery("");
-      setIsMobileMenuOpen(false);
-    }
+    setSearchQuery(searchInput.trim());
+    setIsMobileMenuOpen(false);
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    setSearchQuery(e.target.value);
+    setSearchInput(e.target.value);
   };
 
   return (
@@ -53,7 +48,7 @@ export default function Navbar(): JSX.Element {
                   type="text"
                   placeholder="Search for movies..."
                   className="w-full bg-slate-800 text-white pl-10 pr-4 py-2.5 rounded-lg border border-slate-700 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition placeholder:text-slate-500"
-                  value={searchQuery}
+                  value={searchInput}
                   onChange={handleInputChange}
                   aria-label="Search for movies"
                 />
@@ -112,7 +107,7 @@ export default function Navbar(): JSX.Element {
                     type="text"
                     placeholder="Search for movies..."
                     className="w-full bg-slate-800 text-white pl-10 pr-4 py-2.5 rounded-lg border border-slate-700 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition placeholder:text-slate-500"
-                    value={searchQuery}
+                    value={searchInput}
                     onChange={handleInputChange}
                     aria-label="Search movies"
                   />
